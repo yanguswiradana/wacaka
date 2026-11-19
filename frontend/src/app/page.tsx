@@ -3,12 +3,19 @@
 import { useState } from "react";
 import { Camera, Upload, Sparkles } from "lucide-react";
 import ArCamera from "@/components/ArCamera";
+import ImageUploader from "@/components/ImageUploader";
+
+type ActiveView = "home" | "camera" | "upload";
 
 export default function HomePage() {
-  const [showCamera, setShowCamera] = useState(false);
+  const [view, setView] = useState<ActiveView>("home");
 
-  if (showCamera) {
-    return <ArCamera onBack={() => setShowCamera(false)} />;
+  if (view === "camera") {
+    return <ArCamera onBack={() => setView("home")} />;
+  }
+
+  if (view === "upload") {
+    return <ImageUploader onBack={() => setView("home")} />;
   }
 
   return (
@@ -30,7 +37,7 @@ export default function HomePage() {
       <section className="my-8 space-y-3">
         <button
           type="button"
-          onClick={() => setShowCamera(true)}
+          onClick={() => setView("camera")}
           className="w-full rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-left transition hover:bg-amber-500/20 active:scale-[0.99]"
         >
           <div className="flex items-center gap-3">
@@ -48,23 +55,29 @@ export default function HomePage() {
           </div>
         </button>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 opacity-70">
+        <button
+          type="button"
+          onClick={() => setView("upload")}
+          className="w-full rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 text-left transition hover:border-zinc-700 hover:bg-zinc-900 active:scale-[0.99]"
+        >
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-800 text-zinc-300">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-800 text-zinc-200">
               <Upload className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-sm font-semibold">Static Image Upload</h2>
+              <h2 className="text-sm font-semibold text-zinc-50">
+                Static Image Upload
+              </h2>
               <p className="text-xs text-zinc-400">
-                Segera hadir (Issue #8) — unggah foto naskah dari galeri
+                Unggah foto plang atau naskah dari galeri untuk disalin
               </p>
             </div>
           </div>
-        </div>
+        </button>
       </section>
 
       <footer className="border-t border-zinc-800 pt-4 text-center text-xs text-zinc-500">
-        Wacaka MVP — Siap uji kamera AR via HTTPS / Cloudflare Tunnel.
+        Wacaka MVP — Siap uji kamera AR &amp; upload gambar dengan AI.
       </footer>
     </main>
   );
