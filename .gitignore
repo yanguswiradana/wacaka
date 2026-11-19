@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# AI Models (large weights)
+*.pt
+*.onnx
+*.bin
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
