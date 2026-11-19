@@ -18,7 +18,7 @@ wacaka/
 ## Menjalankan Secara Lokal
 
 ### 1. AI Service (`ai-service/`)
-Menggunakan Python virtual environment:
+Gunakan **Python 3.11 atau 3.12** (OpenCV belum mendukung Python 3.15 secara penuh):
 ```bash
 cd ai-service
 python -m venv .venv
