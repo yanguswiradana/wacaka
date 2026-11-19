@@ -1,9 +1,12 @@
 import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.inference import run_translation_pipeline
 from app.preprocess import decode_and_resize, enhance_contrast
+
+load_dotenv()
 
 app = FastAPI(title="Wacaka AI Service", version="0.1.0")
 
