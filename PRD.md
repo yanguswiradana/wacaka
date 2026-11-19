@@ -114,7 +114,7 @@
 
 | Lapisan | Tech Stack | Hosting & Tanggung Jawab |
 | :--- | :--- | :--- |
-| **Web PWA & AR** | Next.js (App Router), TypeScript, Tailwind CSS, `pnpm` | **Vercel** — Antarmuka *mobile-first*, WebRTC kamera, *overlay* HTML5 `<canvas>`, *bottom sheet* makna + TTS, serta API proxy ke `ai-service`. |
+| **Web PWA & AR** | Next.js (App Router), TypeScript, Tailwind CSS, `npm` | **Vercel** — Antarmuka *mobile-first*, WebRTC kamera, *overlay* HTML5 `<canvas>`, *bottom sheet* makna + TTS, serta API proxy ke `ai-service`. |
 | **Database & Feedback** | Supabase (PostgreSQL) | **Supabase** — Menyimpan riwayat scan, kamus/konteks budaya, dan *feedback* koreksi pengguna sebagai dataset lanjutan. |
 | **AI Service (CV & OCR)** | Python 3.11, FastAPI, OpenCV (`cv2`), YOLOv8n (`onnxruntime`), Vision OCR SDK | **Hugging Face Spaces / Railway / Cloud Run** (backup lokal via Docker + Cloudflare Tunnel) — Pre-processing CLAHE, deteksi blok Aksara Bali (`bbox`), dan transliterasi Unicode + Latin. |
 
