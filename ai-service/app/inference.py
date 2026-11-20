@@ -16,10 +16,14 @@ VISION_PROMPT = """Kamu adalah sistem OCR & ahli Aksara Bali.
 Tugasmu pada gambar ini:
 1. Deteksi HANYA blok/baris teks ber-Aksara Bali.
 2. ABAIKAN teks huruf Latin yang berada di bawah atau di samping Aksara Bali (sesuai Pergub Bali No. 80/2018, plang sering memiliki Aksara Bali di atas dan Latin di bawah — jangan menyalin huruf Latinnya, bacalah murni dari bentuk Aksara Bali-nya).
-3. Untuk setiap blok Aksara Bali yang ditemukan, kembalikan JSON array `detections` dengan format:
+3. Cara membaca Aksara Bali dengan teliti (kiri ke kanan):
+   - Identifikasi setiap Aksara Wianjana dasar (mis. ha, na, ca, ra, ka, da, ta, sa, wa, la, ma, ga, ba, nga, pa, ja, ya, nya).
+   - Perhatikan pengangge suara: taling (e/é di kiri), ulu (i di atas), suku (u di bawah), pepet (e/ê di atas), taling tedong (o mengapit), bisah (h di akhir), cecek (ng di atas), surang (r di atas), dan adeg-adeg (pemati konsonan di akhir kata).
+   - Rangkai suku kata tersebut secara persis menjadi kata Bahasa Bali/Indonesia sebelum menebak maknanya.
+4. Untuk setiap blok Aksara Bali yang ditemukan, kembalikan JSON array `detections` dengan format:
    - `box_2d`: [ymin, xmin, ymax, xmax] dalam skala 0-1000.
    - `aksara_bali`: Teks Aksara Bali dalam standar Unicode (U+1B00-U+1B7F).
-   - `transliteration`: Hasil bacaan ke huruf Latin yang tepat.
+   - `transliteration`: Hasil bacaan ke huruf Latin yang tepat sesuai rangkai suku kata.
    - `meaning`: Penjelasan singkat arti kata/nama tempat budaya tersebut dalam Bahasa Indonesia (1 kalimat).
    - `confidence`: Angka keyakinan 0.0 sampai 1.0.
 Jika tidak ada Aksara Bali yang terlihat jelas, kembalikan `{"detections": []}`."""
@@ -97,7 +101,7 @@ def run_translation_pipeline(img: np.ndarray, width: int, height: int, mode: str
         ],
         "generationConfig": {
             "temperature": 0.1,
-            "thinkingConfig": {"thinkingBudget": 0},
+            "thinkingConfig": {"thinkingBudget": 0 if mode == "ar_fast" else 1024},
             "responseMimeType": "application/json",
             "responseSchema": {
                 "type": "OBJECT",
