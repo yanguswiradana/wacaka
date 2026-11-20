@@ -6,9 +6,8 @@ import cv2
 import httpx
 import numpy as np
 
-DEFAULT_GEMINI_MODEL = "gemini-3.8-flash"
+DEFAULT_GEMINI_MODEL = "gemini-3-flash-preview"
 FALLBACK_GEMINI_MODELS = [
-    "gemini-3.8-flash",
     "gemini-3-flash-preview",
     "gemini-3.1-flash-lite",
 ]
@@ -98,6 +97,7 @@ def run_translation_pipeline(img: np.ndarray, width: int, height: int, mode: str
         ],
         "generationConfig": {
             "temperature": 0.1,
+            "thinkingConfig": {"thinkingBudget": 0},
             "responseMimeType": "application/json",
             "responseSchema": {
                 "type": "OBJECT",
@@ -131,7 +131,7 @@ def run_translation_pipeline(img: np.ndarray, width: int, height: int, mode: str
         },
     }
 
-    timeout_sec = 10.0 if mode == "ar_fast" else 18.0
+    timeout_sec = 7.0 if mode == "ar_fast" else 15.0
     body = None
     last_error: Exception | None = None
 

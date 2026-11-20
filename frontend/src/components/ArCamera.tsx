@@ -161,7 +161,7 @@ export default function ArCamera({ onBack }: ArCameraProps) {
     try {
       const srcW = video.videoWidth || 1280;
       const srcH = video.videoHeight || 720;
-      const maxWidth = 1280;
+      const maxWidth = 800;
       const scale = srcW > maxWidth ? maxWidth / srcW : 1;
       const targetW = Math.round(srcW * scale);
       const targetH = Math.round(srcH * scale);
@@ -178,7 +178,7 @@ export default function ArCamera({ onBack }: ArCameraProps) {
       capCtx.drawImage(video, 0, 0, targetW, targetH);
 
       const blob = await new Promise<Blob | null>((resolve) =>
-        capCanvas.toBlob(resolve, "image/jpeg", 0.82)
+        capCanvas.toBlob(resolve, "image/jpeg", 0.72)
       );
       if (!blob) return;
 
