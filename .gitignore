@@ -22,10 +22,11 @@ env/
 .env.local
 .env.*.local
 
-# AI Models (large weights)
+# AI Models & generated datasets (large binaries)
 *.pt
 *.onnx
 *.bin
+ai-service/scripts/dataset/
 
 # OS / Editor
 .DS_Store
