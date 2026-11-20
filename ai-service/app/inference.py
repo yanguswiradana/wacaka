@@ -6,7 +6,12 @@ import cv2
 import httpx
 import numpy as np
 
-DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
+DEFAULT_GEMINI_MODEL = "gemini-3.8-flash"
+FALLBACK_GEMINI_MODELS = [
+    "gemini-3.8-flash",
+    "gemini-3-flash-preview",
+    "gemini-3.1-flash-lite",
+]
 
 VISION_PROMPT = """Kamu adalah sistem OCR & ahli Aksara Bali.
 Tugasmu pada gambar ini:
@@ -74,8 +79,8 @@ def run_translation_pipeline(img: np.ndarray, width: int, height: int, mode: str
         raise ValueError("Failed to encode preprocessed image.")
 
     image_b64 = base64.b64encode(encoded.tobytes()).decode("ascii")
-    model = os.getenv("GEMINI_MODEL", DEFAULT_GEMINI_MODEL).strip() or DEFAULT_GEMINI_MODEL
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+    configured = os.getenv("GEMINI_MODEL", DEFAULT_GEMINI_MODEL).strip() or DEFAULT_GEMINI_MODEL
+    candidate_models = [configured] + [m for m in FALLBACK_GEMINI_MODELS if m != configured]
 
     payload = {
         "contents": [
@@ -126,11 +131,31 @@ def run_translation_pipeline(img: np.ndarray, width: int, height: int, mode: str
         },
     }
 
-    timeout_sec = 8.0 if mode == "ar_fast" else 15.0
+    timeout_sec = 10.0 if mode == "ar_fast" else 18.0
+    body = None
+    last_error: Exception | None = None
+
     with httpx.Client(timeout=timeout_sec) as client:
-        resp = client.post(url, params={"key": api_key}, json=payload)
-        resp.raise_for_status()
-        body = resp.json()
+        for model in candidate_models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+            try:
+                resp = client.post(url, params={"key": api_key}, json=payload)
+                if resp.status_code in (404, 429, 503):
+                    last_error = httpx.HTTPStatusError(
+                        f"Model {model} returned {resp.status_code}",
+                        request=resp.request,
+                        response=resp,
+                    )
+                    continue
+                resp.raise_for_status()
+                body = resp.json()
+                break
+            except (httpx.TimeoutException, httpx.HTTPStatusError) as exc:
+                last_error = exc
+                continue
+
+    if body is None:
+        raise RuntimeError(f"All Gemini models failed: {last_error}")
 
     raw_text = (
         body.get("candidates", [{}])[0]
